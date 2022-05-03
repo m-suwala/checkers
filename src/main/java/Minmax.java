@@ -9,13 +9,13 @@ public class Minmax {
         if(maximizingPlayer){
             int maxEval = Integer.MIN_VALUE;
             String bestMove = "";
+            state.generateChildren();
             for(State child : state.children){
                 Pair<Integer, String> pair = minmax(child, depth-1, false);
                 int eval = pair.getValue0();
-                String move = pair.getValue1();
                 if(eval > maxEval){
                     maxEval = eval;
-                    bestMove = move;
+                    bestMove = child.move;
                 }
             }
             return Pair.with(maxEval, bestMove);
@@ -23,13 +23,13 @@ public class Minmax {
         else{
             int minEval = Integer.MAX_VALUE;
             String bestMove = "";
+            state.generateChildren();
             for(State child : state.children){
                 Pair<Integer, String> pair = minmax(child, depth-1, true);
                 int eval = pair.getValue0();
-                String move = pair.getValue1();
                 if(eval < minEval){
                     minEval = eval;
-                    bestMove = move;
+                    bestMove = child.move;
                 }
             }
             return Pair.with(minEval, bestMove);

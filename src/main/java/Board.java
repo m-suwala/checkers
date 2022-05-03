@@ -80,18 +80,27 @@ public class Board {
 
     }
 
-    public boolean move(String from, String to){
+    public void move(String from, String to, boolean silent){
         int i, k, l, m;
 
         if(from.length() == 2 && to.length() == 2){
-            k = from.charAt(1) - 49;
-            m = to.charAt(1) - 49;
-            i = from.charAt(0) - 97;
-            l = to.charAt(0) - 97;
+            if((from.charAt(0) > 47 && from.charAt(0) < 58) || (to.charAt(0) > 47 && to.charAt(0) <58)){ // only numbers
+                k = from.charAt(0) - 48;
+                m = to.charAt(0) - 48;
+                i = from.charAt(1) - 48;
+                l = to.charAt(1) - 48;
+            }
+            else { //letters and numbers
+                k = from.charAt(1) - 49;
+                m = to.charAt(1) - 49;
+                i = from.charAt(0) - 97;
+                l = to.charAt(0) - 97;
+            }
 
-            System.out.println("i = " + i + ", k = " + k + ", l = " + l + ", m = " + m);
 
-            if(checkConditions(i,k,l,m)){
+            //System.out.println("i = " + i + ", k = " + k + ", l = " + l + ", m = " + m);
+
+            if(checkConditions(i,k,l,m, silent)){
                 if(currPlayer == whitePawn && board[k][i] == whiteDame){
                     board[m][l] = whiteDame;
                     dameCapture(i, k, l, m);
@@ -115,7 +124,7 @@ public class Board {
                 board[k][i] = ' ';
 
 
-                System.out.println(currPlayer + " has moved from " + from + " to " + to);
+                if(!silent) System.out.println(currPlayer + " has moved from " + (char) (i + 97) + (char) (k + 49) + " to " + (char) (l + 97) + (char) (m + 49));
 
 
                 if(captureStart == -1){
@@ -124,19 +133,20 @@ public class Board {
                     else currPlayer = whitePawn;
                 }
 
-                return true;
             }
             else{
-                System.out.println("The move cannot be made");
-                System.out.println(currPlayer + " please make a move again");
-                return false;
+                if(!silent){
+                    System.out.println("The move cannot be made");
+                    System.out.println(currPlayer + " please make a move again");
+                }
             }
         }
 
         else{
-            System.out.println("Incorrect input");
-            System.out.println(currPlayer + " please make a move again");
-            return false;
+            if(!silent){
+                System.out.println("Incorrect input");
+                System.out.println(currPlayer + " please make a move again");
+            }
         }
 
     }
@@ -187,10 +197,18 @@ public class Board {
                     if(board[k][i] == blackPawn && currPlayer == blackPawn) {
                         if (k < 7) {
                             if (i < 7 && board[k+1][i+1] == empty) {
-                                movements.add(String.valueOf((k * 10 + i) * 100 + (k + 1) * 10 + i + 1));
+                                StringBuilder s = new StringBuilder(String.valueOf((k * 10 + i) * 100 + (k + 1) * 10 + i + 1));
+                                while(s.length() < 4){
+                                    s.insert(0, "0");
+                                }
+                                movements.add(s.toString());
                             }
                             if (i > 0 && board[k+1][i-1] == empty) {
-                                movements.add(String.valueOf((k * 10 + i) * 100 + (k + 1) * 10 + i - 1));
+                                StringBuilder s  = new StringBuilder(String.valueOf((k * 10 + i) * 100 + (k + 1) * 10 + i - 1));
+                                while(s.length() < 4){
+                                    s.insert(0, "0");
+                                }
+                                movements.add(s.toString());
                             }
                         }
                     }
@@ -198,10 +216,18 @@ public class Board {
                     if(board[k][i] == whitePawn && currPlayer == whitePawn){
                         if(k > 0) {
                             if(i < 7 && board[k-1][i+1] == empty){
-                                movements.add(String.valueOf((k*10 + i) * 100 + (k-1)*10 + i+1));
+                                StringBuilder s  = new StringBuilder(String.valueOf((k*10 + i) * 100 + (k-1)*10 + i+1));
+                                while(s.length() < 4){
+                                    s.insert(0, "0");
+                                }
+                                movements.add(s.toString());
                             }
                             if(i > 0 && board[k-1][i-1] == empty){
-                                movements.add(String.valueOf((k*10 + i) * 100 + (k-1)*10 + i-1));
+                                StringBuilder s  = new StringBuilder(String.valueOf((k*10 + i) * 100 + (k-1)*10 + i-1));
+                                while(s.length() < 4){
+                                    s.insert(0, "0");
+                                }
+                                movements.add(s.toString());
                             }
                         }
                     }
@@ -210,7 +236,11 @@ public class Board {
                         int j = 1;
                         while(k+j < 7 && i+j <7){
                             if(board[k+j][i+j] == empty){
-                                movements.add(String.valueOf(((k*10 + i) * 100) + (k+j) * 10 + i+j));
+                                StringBuilder s  = new StringBuilder(String.valueOf(((k*10 + i) * 100) + (k+j) * 10 + i+j));
+                                while(s.length() < 4){
+                                    s.insert(0, "0");
+                                }
+                                movements.add(s.toString());
                             }
                             else{
                                 break;
@@ -221,7 +251,11 @@ public class Board {
                         j = 1;
                         while(k+j < 7 && i-j >= 1){
                             if(board[k+j][i-j] == empty){
-                                movements.add(String.valueOf(((k*10 + i) * 100) + (k+j) * 10 + i-j));
+                                StringBuilder s  = new StringBuilder(String.valueOf(((k*10 + i) * 100) + (k+j) * 10 + i-j));
+                                while(s.length() < 4){
+                                    s.insert(0, "0");
+                                }
+                                movements.add(s.toString());
                             }
                             else{
                                 break;
@@ -232,7 +266,11 @@ public class Board {
                         j = 1;
                         while(k-j >= 1 && i+j < 7){
                             if(board[k-j][i+j] == empty){
-                                movements.add(String.valueOf(((k*10 + i) * 100) + (k-j) * 10 + i+j));
+                                StringBuilder s  = new StringBuilder(String.valueOf(((k*10 + i) * 100) + (k-j) * 10 + i+j));
+                                while(s.length() < 4){
+                                    s.insert(0, "0");
+                                }
+                                movements.add(s.toString());
                             }
                             else{
                                 break;
@@ -243,7 +281,11 @@ public class Board {
                         j = 1;
                         while(k-j >= 1 && i-j >= 1){
                             if(board[k-j][i-j] == empty){
-                                movements.add(String.valueOf(((k*10 + i) * 100) + (k-j) * 10 + i-j));
+                                StringBuilder s  = new StringBuilder(String.valueOf(((k*10 + i) * 100) + (k-j) * 10 + i-j));
+                                while(s.length() < 4){
+                                    s.insert(0, "0");
+                                }
+                                movements.add(s.toString());
                             }
                             else{
                                 break;
@@ -254,8 +296,6 @@ public class Board {
                 }
             }
         }
-
-
 
 
         return movements;
@@ -287,7 +327,6 @@ public class Board {
         }
         return val;
     }
-
 
 
     private void moveWithoutConstraints(int from, int to){
@@ -345,7 +384,7 @@ public class Board {
         }
     }
 
-    private boolean checkConditions(int i, int k, int l, int m){
+    private boolean checkConditions(int i, int k, int l, int m, boolean silent){
         if(k < 8 && k >= 0 && m < 8 && m >= 0 && i < 8 && i >= 0 && l < 8 && l >= 0){
             if(board[m][l] == empty){
                 if(board[m][l] != whiteSpace){
@@ -363,12 +402,23 @@ public class Board {
                         for(String val : captures){
                             if(val.length() > longestCaptures.get(0).length()){
                                 longestCaptures.clear();
+                                StringBuilder valBuilder = new StringBuilder(val);
+                                while(valBuilder.length() < 4){
+                                    valBuilder.insert(0, "0");
+                                }
+                                val = valBuilder.toString();
                                 longestCaptures.add(val);
                             }
                             else if(val.length() == longestCaptures.get(0).length()){
+                                StringBuilder valBuilder = new StringBuilder(val);
+                                while(valBuilder.length() < 4){
+                                    valBuilder.insert(0, "0");
+                                }
+                                val = valBuilder.toString();
                                 longestCaptures.add(val);
                             }
                         }
+
 
                         StringBuilder move = new StringBuilder(String.valueOf((10 * k + i) * 100 + 10 * m + l));
                         while(move.length() < 4){
@@ -381,7 +431,7 @@ public class Board {
                                 return true;
                             }
                             else {
-                                System.out.println("You have to capture opponent's pawn");
+                                if(!silent) System.out.println("You have to capture opponent's pawn");
                             }
                         }
                         else{
@@ -392,11 +442,11 @@ public class Board {
                                         return true;
                                     }
                                     else {
-                                        System.out.println("You have to capture opponent's pawn");
+                                        if(!silent) System.out.println("You have to capture opponent's pawn");
                                     }
                                 }
                                 else {
-                                    System.out.println("You have to choose maximal capture possible");
+                                    if(!silent) System.out.println("You have to choose maximal capture possible");
                                 }
                             }
                         }
@@ -691,8 +741,5 @@ public class Board {
             newBoard.multipleCaptures(val%10, val/10, movementBuilder.toString(), moves);
         }
     }
-
-
-    // TODO: min max
 
 }
