@@ -1,8 +1,5 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Board {
 
@@ -13,8 +10,14 @@ public class Board {
     private final char empty = ' ';
     private final char whiteSpace = '~';
 
+    private static final int lowestWeight = 1;
+    private static final int middleWeight = 2;
+    private static final int highestWeight = 3;
+    private static final int pawnValue = 1;
+    private static final int dameValue = 3;
+
     private char currPlayer;
-    private char[][] board;
+    private final char[][] board;
     private int blackPawnsCount;
     private int whitePawnsCount;
     private int dameMoveCounter;
@@ -51,6 +54,8 @@ public class Board {
         blackPawnsCount = boardToCopy.blackPawnsCount;
         whitePawnsCount = boardToCopy.whitePawnsCount;
         dameMoveCounter = boardToCopy.dameMoveCounter;
+        winner = boardToCopy.winner;
+        captureStart = boardToCopy.captureStart;
 
     }
 
@@ -134,8 +139,6 @@ public class Board {
             return false;
         }
 
-
-
     }
 
     public boolean endGame(){
@@ -156,6 +159,135 @@ public class Board {
 
         return false;
     }
+
+    public ArrayList<String> listOfMoves(){
+
+        ArrayList<String> movements = new ArrayList<>();
+
+        if(checkIfCapturePossible()){
+            ArrayList<String> captures = multipleCaptures();
+            ArrayList<String> longestCaptures = new ArrayList<>();
+            longestCaptures.add("");
+            for(String val : captures){
+                if(val.length() > longestCaptures.get(0).length()){
+                    longestCaptures.clear();
+                    longestCaptures.add(val);
+                }
+                else if(val.length() == longestCaptures.get(0).length()){
+                    longestCaptures.add(val);
+                }
+            }
+
+            movements.addAll(longestCaptures);
+        }
+        else{
+            for(int i = 0; i<8; i++){
+                for(int k = 0; k<8; k++){
+
+                    if(board[k][i] == blackPawn && currPlayer == blackPawn) {
+                        if (k < 7) {
+                            if (i < 7 && board[k+1][i+1] == empty) {
+                                movements.add(String.valueOf((k * 10 + i) * 100 + (k + 1) * 10 + i + 1));
+                            }
+                            if (i > 0 && board[k+1][i-1] == empty) {
+                                movements.add(String.valueOf((k * 10 + i) * 100 + (k + 1) * 10 + i - 1));
+                            }
+                        }
+                    }
+
+                    if(board[k][i] == whitePawn && currPlayer == whitePawn){
+                        if(k > 0) {
+                            if(i < 7 && board[k-1][i+1] == empty){
+                                movements.add(String.valueOf((k*10 + i) * 100 + (k-1)*10 + i+1));
+                            }
+                            if(i > 0 && board[k-1][i-1] == empty){
+                                movements.add(String.valueOf((k*10 + i) * 100 + (k-1)*10 + i-1));
+                            }
+                        }
+                    }
+
+                    if((board[k][i] == whiteDame && currPlayer == whitePawn) || (board[k][i] == blackDame && currPlayer == blackPawn)){
+                        int j = 1;
+                        while(k+j < 7 && i+j <7){
+                            if(board[k+j][i+j] == empty){
+                                movements.add(String.valueOf(((k*10 + i) * 100) + (k+j) * 10 + i+j));
+                            }
+                            else{
+                                break;
+                            }
+                            j++;
+                        }
+
+                        j = 1;
+                        while(k+j < 7 && i-j >= 1){
+                            if(board[k+j][i-j] == empty){
+                                movements.add(String.valueOf(((k*10 + i) * 100) + (k+j) * 10 + i-j));
+                            }
+                            else{
+                                break;
+                            }
+                            j++;
+                        }
+
+                        j = 1;
+                        while(k-j >= 1 && i+j < 7){
+                            if(board[k-j][i+j] == empty){
+                                movements.add(String.valueOf(((k*10 + i) * 100) + (k-j) * 10 + i+j));
+                            }
+                            else{
+                                break;
+                            }
+                            j++;
+                        }
+
+                        j = 1;
+                        while(k-j >= 1 && i-j >= 1){
+                            if(board[k-j][i-j] == empty){
+                                movements.add(String.valueOf(((k*10 + i) * 100) + (k-j) * 10 + i-j));
+                            }
+                            else{
+                                break;
+                            }
+                            j++;
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+        return movements;
+    }
+
+    public int boardValue(){
+        int val = 0;
+        for(int i = 0; i<8; i++){
+            for(int k = 0; k<8; k++){
+                if(i==0 || i==7 || k==0 || k==7){ // lowest weight
+                    if(board[i][k] == blackPawn) val-= lowestWeight * pawnValue;
+                    if(board[i][k] == blackDame) val-= lowestWeight * dameValue;
+                    if(board[i][k] == whitePawn) val+= lowestWeight * pawnValue;
+                    if(board[i][k] == whiteDame) val+= lowestWeight * dameValue;
+                }
+                else if(i==1 || i==6 || k==1 || k==6){ // middle weight
+                    if(board[i][k] == blackPawn) val-= middleWeight * pawnValue;
+                    if(board[i][k] == blackDame) val-= middleWeight * dameValue;
+                    if(board[i][k] == whitePawn) val+= middleWeight * pawnValue;
+                    if(board[i][k] == whiteDame) val+= middleWeight * dameValue;
+                }
+                else{ // highest weight
+                    if(board[i][k] == blackPawn) val-= highestWeight * pawnValue;
+                    if(board[i][k] == blackDame) val-= highestWeight * dameValue;
+                    if(board[i][k] == whitePawn) val+= highestWeight * pawnValue;
+                    if(board[i][k] == whiteDame) val+= highestWeight * dameValue;
+                }
+            }
+        }
+        return val;
+    }
+
 
 
     private void moveWithoutConstraints(int from, int to){
@@ -560,111 +692,7 @@ public class Board {
         }
     }
 
-    private ArrayList<String> listOfMoves(){
 
-        ArrayList<String> movements = new ArrayList<>();
-
-        if(checkIfCapturePossible()){
-            ArrayList<String> captures = multipleCaptures();
-            ArrayList<String> longestCaptures = new ArrayList<>();
-            longestCaptures.add("");
-            for(String val : captures){
-                if(val.length() > longestCaptures.get(0).length()){
-                    longestCaptures.clear();
-                    longestCaptures.add(val);
-                }
-                else if(val.length() == longestCaptures.get(0).length()){
-                    longestCaptures.add(val);
-                }
-            }
-
-            movements.addAll(longestCaptures);
-        }
-        else{
-            for(int i = 0; i<8; i++){
-                for(int k = 0; k<8; k++){
-
-                    if(board[k][i] == blackPawn && currPlayer == blackPawn) {
-                        if (k < 7) {
-                            if (i < 7 && board[k+1][i+1] == empty) {
-                                movements.add(String.valueOf((k * 10 + i) * 100 + (k + 1) * 10 + i + 1));
-                            }
-                            if (i > 0 && board[k+1][i-1] == empty) {
-                                movements.add(String.valueOf((k * 10 + i) * 100 + (k + 1) * 10 + i - 1));
-                            }
-                        }
-                    }
-
-                    if(board[k][i] == whitePawn && currPlayer == whitePawn){
-                        if(k > 0) {
-                            if(i < 7 && board[k-1][i+1] == empty){
-                                movements.add(String.valueOf((k*10 + i) * 100 + (k-1)*10 + i+1));
-                            }
-                            if(i > 0 && board[k-1][i-1] == empty){
-                                movements.add(String.valueOf((k*10 + i) * 100 + (k-1)*10 + i-1));
-                            }
-                        }
-                    }
-
-                    if((board[k][i] == whiteDame && currPlayer == whitePawn) || (board[k][i] == blackDame && currPlayer == blackPawn)){
-                        int j = 1;
-                        while(k+j < 7 && i+j <7){
-                            if(board[k+j][i+j] == empty){
-                                movements.add(String.valueOf(((k*10 + i) * 100) + (k+j) * 10 + i+j));
-                            }
-                            else{
-                                break;
-                            }
-                            j++;
-                        }
-
-                        j = 1;
-                        while(k+j < 7 && i-j >= 1){
-                            if(board[k+j][i-j] == empty){
-                                movements.add(String.valueOf(((k*10 + i) * 100) + (k+j) * 10 + i-j));
-                            }
-                            else{
-                                break;
-                            }
-                            j++;
-                        }
-
-                        j = 1;
-                        while(k-j >= 1 && i+j < 7){
-                            if(board[k-j][i+j] == empty){
-                                movements.add(String.valueOf(((k*10 + i) * 100) + (k-j) * 10 + i+j));
-                            }
-                            else{
-                                break;
-                            }
-                            j++;
-                        }
-
-                        j = 1;
-                        while(k-j >= 1 && i-j >= 1){
-                            if(board[k-j][i-j] == empty){
-                                movements.add(String.valueOf(((k*10 + i) * 100) + (k-j) * 10 + i-j));
-                            }
-                            else{
-                                break;
-                            }
-                            j++;
-                        }
-                    }
-                }
-            }
-        }
-
-
-
-
-        return movements;
-    }
-
-
-
-
-    // TODO: funkcja oceny stanu planszy
     // TODO: min max
 
 }
