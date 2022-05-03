@@ -78,53 +78,63 @@ public class Board {
     public boolean move(String from, String to){
         int i, k, l, m;
 
-        k = from.charAt(1) - 49;
-        m = to.charAt(1) - 49;
-        i = from.charAt(0) - 97;
-        l = to.charAt(0) - 97;
+        if(from.length() == 2 && to.length() == 2){
+            k = from.charAt(1) - 49;
+            m = to.charAt(1) - 49;
+            i = from.charAt(0) - 97;
+            l = to.charAt(0) - 97;
 
-        System.out.println("i = " + i + ", k = " + k + ", l = " + l + ", m = " + m);
+            System.out.println("i = " + i + ", k = " + k + ", l = " + l + ", m = " + m);
 
-        if(checkConditions(i,k,l,m)){
-            if(currPlayer == whitePawn && board[k][i] == whiteDame){
-                board[m][l] = whiteDame;
-                dameCapture(i, k, l, m);
-                dameMoveCounter++;
-            }
-            else if(currPlayer == blackPawn && board[k][i] == blackDame){
-                board[m][l] = blackDame;
-                dameCapture(i, k, l, m);
-                dameMoveCounter++;
-            }
-            else {
-                if(Math.abs(i-l ) == 2){
-                    board[(k+m)/2][(i+l)/2] = empty;
-                    if(currPlayer == whitePawn) blackPawnsCount--;
-                    else whitePawnsCount--;
+            if(checkConditions(i,k,l,m)){
+                if(currPlayer == whitePawn && board[k][i] == whiteDame){
+                    board[m][l] = whiteDame;
+                    dameCapture(i, k, l, m);
+                    dameMoveCounter++;
                 }
-                board[m][l] = currPlayer;
-                dameMoveCounter=0;
+                else if(currPlayer == blackPawn && board[k][i] == blackDame){
+                    board[m][l] = blackDame;
+                    dameCapture(i, k, l, m);
+                    dameMoveCounter++;
+                }
+                else {
+                    if(Math.abs(i-l ) == 2){
+                        board[(k+m)/2][(i+l)/2] = empty;
+                        if(currPlayer == whitePawn) blackPawnsCount--;
+                        else whitePawnsCount--;
+                    }
+                    board[m][l] = currPlayer;
+                    dameMoveCounter=0;
+                }
+
+                board[k][i] = ' ';
+
+
+                System.out.println(currPlayer + " has moved from " + from + " to " + to);
+
+
+                if(captureStart == -1){
+                    if(checkEndOfBoard(m)) switchToDame(l,m);
+                    if(currPlayer == whitePawn) currPlayer = blackPawn;
+                    else currPlayer = whitePawn;
+                }
+
+                return true;
             }
-
-            board[k][i] = ' ';
-
-
-            System.out.println(currPlayer + " has moved from " + from + " to " + to);
-
-
-            if(captureStart == -1){
-                if(checkEndOfBoard(m)) switchToDame(l,m);
-                if(currPlayer == whitePawn) currPlayer = blackPawn;
-                else currPlayer = whitePawn;
+            else{
+                System.out.println("The move cannot be made");
+                System.out.println(currPlayer + " please make a move again");
+                return false;
             }
-
-            return true;
         }
+
         else{
-            System.out.println("The move cannot be made");
+            System.out.println("Incorrect input");
             System.out.println(currPlayer + " please make a move again");
             return false;
         }
+
+
 
     }
 
@@ -254,7 +264,7 @@ public class Board {
                                     }
                                 }
                                 else {
-                                    System.out.println("You have to capture opponent's pawn");
+                                    System.out.println("You have to choose maximal capture possible");
                                 }
                             }
                         }
@@ -265,7 +275,7 @@ public class Board {
                         if(board[k][i] == currPlayer){
                             return (currPlayer == blackPawn && k + 1 == m && (i + 1 == l || i - 1 == l)) || (currPlayer == whitePawn && k - 1 == m && (i + 1 == l || i - 1 == l));
                         }
-                        else if((currPlayer == blackPawn && board[k][i] == blackDame) || (currPlayer == whitePawn && board[k][i] == whitePawn)){
+                        else if((currPlayer == blackPawn && board[k][i] == blackDame) || (currPlayer == whitePawn && board[k][i] == whiteDame)){
                             return Math.abs(i - l) == Math.abs(k - m);
                         }
                     }
