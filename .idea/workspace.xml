@@ -4,13 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="46cec7bd-c04f-4063-ae67-62f5d8f19262" name="Changes" comment="add board value, state class, minimax function">
+    <list default="true" id="46cec7bd-c04f-4063-ae67-62f5d8f19262" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/AlphaBeta.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Board.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Checkers.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Checkers.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Minmax.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Minmax.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/State.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/State.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Board.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Board.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Checkers.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Checkers.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/State.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/State.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,7 +109,14 @@
       <option name="project" value="LOCAL" />
       <updated>1651588484500</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="implement 3 variants: plarer vs player, ai vs ai, player vs ai">
+      <created>1651622296464</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1651622296465</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -116,7 +125,8 @@
     <MESSAGE value="add board value, implement state class and its functions, add minimax function" />
     <MESSAGE value="add board value, state class, minimax function" />
     <MESSAGE value="add minmax" />
-    <option name="LAST_COMMIT_MESSAGE" value="add minmax" />
+    <MESSAGE value="implement 3 variants: plarer vs player, ai vs ai, player vs ai" />
+    <option name="LAST_COMMIT_MESSAGE" value="implement 3 variants: plarer vs player, ai vs ai, player vs ai" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

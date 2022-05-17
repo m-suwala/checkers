@@ -3,9 +3,9 @@ import java.util.Arrays;
 
 public class Board {
 
-    private final char whitePawn = 'W';
+    public final char whitePawn = 'W';
     private final char whiteDame = 'M';
-    private final char blackPawn = 'b';
+    public final char blackPawn = 'b';
     private final char blackDame = 'P';
     private final char empty = ' ';
     private final char whiteSpace = '~';
@@ -24,8 +24,20 @@ public class Board {
     private char winner;
     private int captureStart;
 
+    private int whiteMoveCount;
+    private int blackMoveCount;
+
     public char getWinner() {
         return winner;
+    }
+
+    public int getWinnerMoveCount(){
+        if (winner == blackPawn)
+            return blackMoveCount;
+        else if (winner == whitePawn)
+            return whiteMoveCount;
+
+        return 0;
     }
 
     public Board(){
@@ -34,6 +46,8 @@ public class Board {
         blackPawnsCount = whitePawnsCount = 8;
         dameMoveCounter = 0;
         captureStart = -1;
+        whiteMoveCount = 0;
+        blackMoveCount = 0;
 
         for(int i = 0; i<8; i++){
             for(int k = 0; k<8; k++){
@@ -56,6 +70,8 @@ public class Board {
         dameMoveCounter = boardToCopy.dameMoveCounter;
         winner = boardToCopy.winner;
         captureStart = boardToCopy.captureStart;
+        whiteMoveCount = boardToCopy.whiteMoveCount;
+        blackMoveCount = boardToCopy.blackMoveCount;
 
     }
 
@@ -80,7 +96,7 @@ public class Board {
 
     }
 
-    public void move(String from, String to, boolean silent){
+    public boolean move(String from, String to, boolean silent){
         int i, k, l, m;
 
         if(from.length() == 2 && to.length() == 2){
@@ -133,11 +149,17 @@ public class Board {
                     else currPlayer = whitePawn;
                 }
 
+                if(currPlayer == blackPawn) blackMoveCount++;
+                else whiteMoveCount++;
+
+                return true;
+
             }
             else{
                 if(!silent){
                     System.out.println("The move cannot be made");
                     System.out.println(currPlayer + " please make a move again");
+                    return false;
                 }
             }
         }
@@ -146,9 +168,11 @@ public class Board {
             if(!silent){
                 System.out.println("Incorrect input");
                 System.out.println(currPlayer + " please make a move again");
+                return false;
             }
         }
 
+        return false;
     }
 
     public boolean endGame(){
